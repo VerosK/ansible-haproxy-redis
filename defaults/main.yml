@@ -1,0 +1,27 @@
+
+haproxy_config: /etc/haproxy/haproxy.cfg
+
+haproxy_stats_password: "admin:nbusr123"
+haproxy_stats_port: 9000
+haproxy_stats_host: "127.0.0.1"
+
+haproxy_stats_config_block: |
+  listen stats
+      mode http
+      bind {{haproxy_stats_host}}:{{haproxy_stats_port}}
+      maxconn 9
+
+      clitimeout      10s
+      srvtimeout      10s
+      contimeout      10s
+      timeout queue   10s
+
+      stats enable  # Enable stats page
+      stats hide-version  # Hide HAProxy version
+      stats realm HA Proxy\ Statistics  # Title text for popup window
+      stats uri / # Stats URI - or use /haproxy_stats
+      stats auth {{ haproxy_stats_password }} # Authentication credentials
+
+haproxy_redis_backends:
+    first: "127.0.0.1:6379"      
+    second: "127.0.0.1:6378" 

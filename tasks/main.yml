@@ -1,0 +1,22 @@
+
+- name: "Install haproxy"
+  apt:
+    name: 'haproxy'
+    state: present
+
+- name: "Create haproxy replication config"
+  template:
+    dest: '{{ haproxy_config }}'
+    src: haproxy.cfg.j2
+    backup: yes
+  notify:
+    - reload haproxy
+
+- meta: flush_handlers
+
+- name: "Check HAProxy Redis is listening"
+  wait_for:
+    host: "{{ redis_check_address }}"
+    connect_timeout: 1
+    timeout: 1
+    port: "{{ haproxy_redis_port }}"
